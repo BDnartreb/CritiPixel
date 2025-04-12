@@ -72,6 +72,13 @@
                     {% block reviews %}
                         <div class="bg-light p-3 rounded">
                             <h2 class="text-uppercase">Avis des lecteurs</h2>
+
+                            {% if is_granted('review', video_game) %}
+                            <p>FORMULAIRE AFFICHÉ</p>
+                        {% else %}
+                            <p>REFUSÉ PAR LE VOTER</p>
+                        {% endif %}
+
                             {% if is_granted('review', video_game) %}
                                 <div class="mb-4">
                                     {{ form_start(form) }}
