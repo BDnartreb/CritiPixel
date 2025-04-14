@@ -27,34 +27,73 @@ final class DataFixtures extends Fixture
 
     public function load(ObjectManager $manager) : void
     {
-    //TAGS
-        $tags = [
-            ["Action"], ["platformer"],["shooter-fps"], ["Tactical"] 
-            // ,["dungeon-crawler"], ["open-world"],
-            // ["adventure"], ["puzzle"],["simulation"], ["driving"], ["farming"], ["strategy"], ["racing"],
-            // ["sport"], ["rhythm"], ["horror"], ["educational"], ["narrative"]
-        ];            
-
-        foreach ($tags as $tag) {
-            $newtag = new Tag();
-            $newtag->setName($tag[0]);
-            $manager->persist($newtag);
+        //TAGS
+        $tagNames = ["Action", "platformer","shooter-fps", "Tactical"];
+            // ,"dungeon-crawler", "open-world", "adventure", "puzzle",
+            // "simulation", "driving", "farming", "strategy", "racing",
+            // "sport", "rhythm", "horror", "educational", "narrative"]
+        
+        $tags = [];       
+        foreach ($tagNames as $name) {
+            $tag = new Tag();
+            $tag->setName($name);
+            $manager->persist($tag);
+            $tags[] = $tag;
         }
 
-    //USERS
-        for ($i = 0; $i <10; $i++) {
-            $user = new User();
-            $user->setEmail(sprintf('user%d@email.com', $i));
-            $user->setPlainPassword('password');
-            $user->setUsername(sprintf('user%d', $i));
-            $manager->persist($user);
+        //USER TEST
+        $userTest = new User();
+        $userTest->setEmail('usertest@email.com');
+        $userTest->setPlainPassword('password');
+        $userTest->setUsername('usertest');
+        $manager->persist($userTest);
+        $manager->flush();
+
+        //$tags = $manager->getRepository(Tag::class)->findAll();
+
+        // VIDEOGAMES
+        for ($i = 0; $i < 10; $i++){
+            $videoGameTest = new VideoGame();
+            $videoGameTest->setTitle(sprintf('JeuTest%d', $i));
+            $videoGameTest->setImageName('video_game_' . $i . '.png');
+            $videoGameTest->setImageSize(2541524);
+            $videoGameTest->setDescription('Descritpion du Jeu ' . $i);
+            $videoGameTest->setReleaseDate(new DateTimeImmutable());
+            $videoGameTest->setTest('Test ' . $i);
+            $videoGameTest->setRating(random_int(1, 5));
+            $manager->persist($videoGameTest);
         }
         $manager->flush();
 
-        $tags = $manager->getRepository(Tag::class)->findAll();
-        $users = $manager->getRepository(User::class)->findAll();
+        $videoGames = [];
+        $videoGames = $manager->getRepository(VideoGame::class)->findAll();
 
-    // VIDAOGAMES
+        // VideoGame reviewed by userTest with tag[1]
+        $videoGame1 = $videoGames[1];
+        $reviewTest = new Review();
+        $reviewTest->setVideoGame($videoGame1);
+        $reviewTest->setUser($userTest);
+        $reviewTest->setRating(5);
+        $reviewTest->setComment('Commentaire Review Test');
+        $manager->persist($reviewTest);
+        $videoGameTest->getReviews()->add($reviewTest);
+        $videoGame1->getTags()->add($tags[1]);
+        $manager->persist($videoGame1);
+
+        // VideoGame No reviewed with tag[1] and tag[2]
+        $videoGame2 = $videoGames[2];
+        $videoGame2->getTags()->add($tags[1]);
+        $videoGame2->getTags()->add($tags[2]);
+        $manager->persist($videoGame2);
+
+        // VideoGame No reviewed with tag[1], tag[2] and tag[3]
+        $videoGame3 = $videoGames[3];
+        $videoGame3->getTags()->add($tags[1]);
+        $videoGame3->getTags()->add($tags[2]);
+        $videoGame3->getTags()->add($tags[3]);
+        $manager->persist($videoGame3);
+
+        // VIDEOGAMES
         $videoGames = []; 
         for ($i = 0; $i < 50; $i++) {
             $videoGame = new VideoGame();
@@ -65,82 +104,9 @@ final class DataFixtures extends Fixture
             $videoGame->setReleaseDate(new DateTimeImmutable());
             $videoGame->setTest('Test ' . $i);
             $videoGame->setRating(random_int(1, 5));
-            $videoGames [] = $videoGame;
-        }     
-    
-    // REVIEWS
-        foreach ($videoGames as $videoGame) {
-            $uniq = random_int(0, 5); // A user can give only one rating for each videogame
-            for ($i = 0; $i < random_int(1, 5); $i++){    
-                $review = new Review();
-                $review->setVideoGame($videoGame);
-                
-                $review->setUser($users[$uniq]);
-                $uniq++;
-                $review->setRating(random_int(1, 5));
-                $review->setComment($this->faker->paragraphs(10, true));
-                $manager->persist($review);
-                $videoGame->getReviews()->add($review);
-            }
-
-        // TAGS
-            for ($j = 0; $j < random_int(1, 4); $j++){
-                $videoGame->getTags()->add($tags[random_int(1, count($tags)-1)]);    
-            }
-                    
-            $manager->persist($review);
             $manager->persist($videoGame);
-            $this->calculateAverageRating->calculateAverage($videoGame);
-            $this->countRatingsPerValue->countRatingsPerValue($videoGame);
-        }
-
-            //////////////////////////////////////////
-        //USER TEST
-            $userTest = new User();
-            $userTest->setEmail('usertest@email.com');
-            $userTest->setPlainPassword('password');
-            $userTest->setUsername('usertest');
-            $manager->persist($userTest);
-            $manager->flush();
-
-            // VIDAOGAMES
-            $videoGameTest0 = new VideoGame();
-            $videoGameTest0->setTitle('Jeu test noreview');
-            $videoGameTest0->setImageName('video_game_0.png');
-            $videoGameTest0->setImageSize(2541524);
-            $videoGameTest0->setDescription('Descritpion du Jeu vidéo test noreview');
-            $videoGameTest0->setReleaseDate(new DateTimeImmutable());
-            $videoGameTest0->setTest('Test Noreview');
-            $videoGameTest0->setRating(3);     
-            $manager->persist($videoGameTest0);
-
-            $videoGameTest = new VideoGame();
-            $videoGameTest->setTitle('Jeu test review');
-            $videoGameTest->setImageName('video_game_0.png');
-            $videoGameTest->setImageSize(2541524);
-            $videoGameTest->setDescription('Descritpion du Jeu vidéo test review');
-            $videoGameTest->setReleaseDate(new DateTimeImmutable());
-            $videoGameTest->setTest('Test Review');
-            $videoGameTest->setRating(4);     
-
-            // REVIEWS
-            $reviewTest = new Review();
-            $reviewTest->setVideoGame($videoGameTest);
-            $reviewTest->setUser($userTest);
-            $reviewTest->setRating(5);
-            $reviewTest->setComment('Commentaire Review Test');
-            $manager->persist($reviewTest);
-            $videoGameTest->getReviews()->add($reviewTest);
-
-            // TAGS
-            $videoGameTest->getTags()->add($tags[1]);    
-                        
-            $manager->persist($reviewTest);
-            $manager->persist($videoGameTest);
-
-            $this->calculateAverageRating->calculateAverage($videoGameTest);
-            $this->countRatingsPerValue->countRatingsPerValue($videoGameTest);
-
+            //$videoGames [] = $videoGame;
+        }     
 
         $manager->flush();
     }

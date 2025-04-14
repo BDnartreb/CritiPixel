@@ -2,26 +2,51 @@
 
 namespace App\Tests;
 
+use App\Model\Entity\User;
+use App\Tests\Functional\FunctionalTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class ReviewFormAccessTest extends WebTestCase
+//class ReviewFormAccessTest extends WebTestCase
+class ReviewFormAccessTest extends FunctionalTestCase
 {
     private EntityManagerInterface $em;
-    private KernelBrowser $client;
+    //protected KernelBrowser $client;
 
-    public function testShouldNotDisplayFromForUnconnectedUser(): void
+    public function testShouldNotDisplayFromToUnconnectedUser(): void
     {
-        $this->client = static::createClient();
-        //https://symfony.com/doc/current/testing.html / Logging in Users (Authentication)
-        $container = $this->client->getContainer();
+        $this->get('/jeutest0');
+        self::assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'JeuTest0');
+        $this->assertSelectorNotExists('form');
+    }
+
+    public function testShouldDisplayFromToConnectedUser(): void
+    {
+        $container = $this->getContainer();
         $this->em = $container->get('doctrine')->getManager();
-        
-        // Go to the the review page and check the right page is displayed
-        $crawler = $this->client->request('GET', '/jeu-test-noreview');
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Jeu test noreview');
+        $userRepository = $this->em->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => 'usertest@email.com']);  
+        $this->client->loginUser($user);
+
+        $this->get('/jeutest0');
+        self::assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'JeuTest0');
+        $this->assertSelectorExists('form');
+    }
+
+    public function testShouldNotDisplayFromToUserAlreadyReviewedTheGame(): void
+    {
+        $container = $this->getContainer();
+        $this->em = $container->get('doctrine')->getManager();
+        $userRepository = $this->em->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => 'usertest@email.com']);  
+        $this->client->loginUser($user);
+
+        $this->get('/jeutest1');
+        self::assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'JeuTest1');
         $this->assertSelectorNotExists('form');
     }
 }

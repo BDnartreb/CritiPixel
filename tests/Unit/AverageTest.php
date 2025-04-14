@@ -47,8 +47,6 @@ class AverageTest extends TestCase
 }
 
 
-
-
     // /**
     // * @dataProvider provideVideoGame
     // */
