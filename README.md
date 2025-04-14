@@ -1,6 +1,6 @@
 <img src="assets/images/logo.png" alt="CritiPixel" width="200" />
 
-# CritiPixel
+# CritiPixel_2
 
 ## Pré-requis
 * PHP >= 8.2
