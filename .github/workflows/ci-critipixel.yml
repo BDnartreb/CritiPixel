@@ -15,7 +15,7 @@ permissions:
   contents: read
 
 jobs:
-  symfony-tests:
+  critipixel-tests:
     runs-on: ubuntu-latest
     steps:
     #  To automatically get bug fixes and new Php versions for shivammathur/setup-php,
@@ -45,3 +45,5 @@ jobs:
       env:
         DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
       run: vendor/bin/phpunit
+    - name: Execute code checking via PHPStan
+      run: vendor/bin/phpstan
