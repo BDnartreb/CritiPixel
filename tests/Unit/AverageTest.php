@@ -24,6 +24,9 @@ class AverageTest extends TestCase
         self::assertSame($expectedAverageRating, $videoGame->getAverageRating());
     }
 
+    /**
+    * @return iterable<array{VideoGame, ?int}>
+    */
     public static function provideVideoGame()
     {
         $oneRating = new VideoGame();

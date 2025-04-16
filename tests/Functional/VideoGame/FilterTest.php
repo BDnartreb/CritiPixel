@@ -50,7 +50,7 @@ final class FilterTest extends FunctionalTestCase
         $this->em = $container->get('doctrine')->getManager();
         $tags = $this->em->getRepository(Tag::class)->findAll();
    
-        $form['filter[tags][1]'] = $tags[1]->getId();
+        $form['filter[tags][1]'] = (string) $tags[1]->getId();
         $this->client->submit($form);
         $this->assertResponseIsSuccessful();
         self::assertSelectorCount(3, 'article.game-card');
@@ -65,11 +65,18 @@ final class FilterTest extends FunctionalTestCase
         $container = $this->client->getContainer();
         $this->em = $container->get('doctrine')->getManager();
         $tags = $this->em->getRepository(Tag::class)->findAll();
-        $form['filter[tags][1]'] = $tags[1]->getId();
-        $form['filter[tags][2]'] = $tags[2]->getId();
+        $form['filter[tags][1]'] = (string) $tags[1]->getId();
+        $form['filter[tags][2]'] = (string) $tags[2]->getId();
         $this->client->submit($form);
         $this->assertResponseIsSuccessful();
         $this->assertSelectorCount(2, 'article');
         //echo $this->client->getResponse()->getContent();
+    }
+
+    public function testShouldNotFilterGamesWithUnknownTag(): void
+    {
+        $this->client->request('GET', '/', ['filter' => ['tags' => ['toto']]]);
+        $this->assertResponseIsSuccessful();
+        self::assertSelectorCount(10, 'article.game-card');
     }
 }

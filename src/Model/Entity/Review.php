@@ -16,6 +16,9 @@ use Symfony\Component\Validator\Constraints\Range;
 #[Entity]
 class Review
 {
+    /** 
+    * @var int|null
+    */
     #[Id]
     #[GeneratedValue]
     #[Column]

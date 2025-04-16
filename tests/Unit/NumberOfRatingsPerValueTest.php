@@ -27,6 +27,9 @@ class NumberOfRatingsPerValueTest extends TestCase
         self::assertEquals($expectedNumberOfRatingPerValue, $videoGame->getNumberOfRatingsPerValue());
     }
 
+    /**
+     * @return iterable<array{VideoGame, NumberOfRatingPerValue}>
+     */
     public static function provideNumberOfRatingsPerValue()
     {
         $videoGameWithOneRating = new VideoGame();
