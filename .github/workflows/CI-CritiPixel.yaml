@@ -55,17 +55,17 @@ jobs:
 
       - name: Create Database Schema
         env:
-          DATABASE_URL: 'pgsql://symfony:symfony@localhost:5432/test_db'
+          DATABASE_URL: 'postgresql://postgres:password@127.0.0.1:5432/test_db'
         run: php bin/console doctrine:schema:create --no-interaction
 
       - name: Load Fixtures
         env:
-          DATABASE_URL: 'pgsql://symfony:symfony@localhost:5432/test_db'
+          DATABASE_URL: 'postgresql://postgres:password@127.0.0.1:5432/test_db'
         run: php bin/console doctrine:fixtures:load --no-interaction
 
       - name: Run Tests
         env:
-          DATABASE_URL: 'pgsql://symfony:symfony@localhost:5432/test_db'
+          DATABASE_URL: 'postgresql://postgres:password@127.0.0.1:5432/test_db'
         run: vendor/bin/phpunit
 
       - name: Execute code checking via PHPStan
