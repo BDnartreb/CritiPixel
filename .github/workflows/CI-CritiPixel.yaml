@@ -10,6 +10,20 @@ permissions:
 jobs:
   critipixel-tests:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        ports: [5432:5432]
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: symfony
+          POSTGRES_PASSWORD: symfony
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
 
@@ -32,24 +46,26 @@ jobs:
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - name: Create SQLite Database
+      - name: Wait for PostgreSQL to be ready
         run: |
-          mkdir -p data
-          touch data/database.sqlite
+          until pg_isready -h localhost -p 5432 -U symfony; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
 
-      - name: Run Doctrine Migrations
+      - name: Create Database Schema
         env:
-          DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
+          DATABASE_URL: 'pgsql://symfony:symfony@localhost:5432/test_db'
         run: php bin/console doctrine:schema:create --no-interaction
 
       - name: Load Fixtures
         env:
-          DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
+          DATABASE_URL: 'pgsql://symfony:symfony@localhost:5432/test_db'
         run: php bin/console doctrine:fixtures:load --no-interaction
 
-      - name: Execute tests (Unit and Feature tests) via PHPUnit
+      - name: Run Tests
         env:
-          DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
+          DATABASE_URL: 'pgsql://symfony:symfony@localhost:5432/test_db'
         run: vendor/bin/phpunit
 
       - name: Execute code checking via PHPStan
