@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Symfony
+name: CI-CritiPixel
 
 on:
   push:
@@ -39,6 +39,12 @@ jobs:
       run: |
         mkdir -p data
         touch data/database.sqlite
+        
+    - name: Run Doctrine schema creation
+      env:
+        DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
+      run: php bin/console doctrine:schema:create --env=test --no-interaction
+    
     - name: Fixtures load
       env:
         DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
