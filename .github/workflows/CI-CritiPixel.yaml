@@ -60,7 +60,14 @@ jobs:
           DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
         run: |
           php bin/console doctrine:database:drop --force --if-exists --no-interaction --env=test
+          sleep 2
           php bin/console doctrine:database:create --no-interaction --env=test
+
+      - name: Drop full schema
+        env:
+          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
+        run: php bin/console doctrine:schema:drop --full-database --force --no-interaction --env=test
+
 
       - name: Run Doctrine Migrations
         env:
