@@ -30,7 +30,6 @@ class ReviewFormAccessTest extends FunctionalTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(422);
-;
     }
 
 }
