@@ -10,10 +10,12 @@ permissions:
 jobs:
   critipixel-tests:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:15
-        ports: [5432:5432]
+        ports:
+          - 5432:5432
         env:
           POSTGRES_DB: test_db
           POSTGRES_USER: symfony
@@ -55,21 +57,22 @@ jobs:
 
       - name: Create Database Schema
         env:
-          DATABASE_URL: 'postgresql://postgres:password@localhost:5432/test_db'
+          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
         run: php bin/console doctrine:schema:create --no-interaction
 
       - name: Load Fixtures
         env:
-          DATABASE_URL: 'postgresql://postgres:password@localhost:5432/test_db'
+          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
         run: php bin/console doctrine:fixtures:load --no-interaction
 
       - name: Run Tests
         env:
-          DATABASE_URL: 'postgresql://postgres:password@localhost:5432/test_db'
+          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
         run: vendor/bin/phpunit
 
       - name: Execute code checking via PHPStan
         run: vendor/bin/phpstan
+
 
 
 
