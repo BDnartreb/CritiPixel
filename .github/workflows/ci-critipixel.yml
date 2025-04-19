@@ -7,7 +7,7 @@ name: CI-CritiPixel
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "BDnartreb-patch-1" ]
 
 permissions:
   contents: read
