@@ -1,4 +1,9 @@
-name: ci-critipixel
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Symfony
 
 on:
   push:
@@ -8,154 +13,37 @@ permissions:
   contents: read
 
 jobs:
-  critipixel-tests:
+  symfony-tests:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:15
-        ports:
-          - 5432:5432
-        env:
-#          POSTGRES_DB: test_db
-          POSTGRES_USER: symfony
-          POSTGRES_PASSWORD: symfony
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: shivammathur/setup-php@2cb9b829437ee246e9b3cac53555a39208ca6d28
-        with:
-          php-version: '8.2'
-
-      # - name: Copy .env.test.local
-      #   run: php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
-
-      # - name: Cache Composer packages
-      #   id: composer-cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: vendor
-      #     key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-php-
-
-      - name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-
-      - name: Wait for PostgreSQL to be ready
-        run: |
-          until pg_isready -h localhost -p 5432 -U symfony; do
-            echo "Waiting for PostgreSQL..."
-            sleep 2
-          done
-
-
-      - name: Create test database manually
-        env:
-          PGPASSWORD: symfony
-        run: |
-          psql -h localhost -U symfony -d postgres -c "DROP DATABASE IF EXISTS test_db_test;"
-          psql -h localhost -U symfony -d postgres -c "CREATE DATABASE test_db_test;"
-
-      - name: Migrate schema
-        env:
-          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db_test
-        run: php bin/console doctrine:migrations:migrate --no-interaction
-
-      # - name: Drop & Recreate test database via Doctrine
-      #   env:
-      #     DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
-      #   run: |
-      #     php bin/console doctrine:database:drop --force --if-exists --no-interaction --env=test
-      #     sleep 2
-      #     php bin/console doctrine:database:create --no-interaction --env=test
-
-      # - name: Drop full schema
-      #   env:
-      #     DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
-      #   run: php bin/console doctrine:schema:drop --full-database --force --no-interaction --env=test
+    #  To automatically get bug fixes and new Php versions for shivammathur/setup-php,
+    # change this to (see https://github.com/shivammathur/setup-php#bookmark-versioning):
+    # uses: shivammathur/setup-php@v2
+    - uses: shivammathur/setup-php@2cb9b829437ee246e9b3cac53555a39208ca6d28
+      with:
+        php-version: '8.2'
+    - uses: actions/checkout@v4
+    - name: Copy .env.test.local
+      run: php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+    - name: Install Dependencies
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    - name: Create Database
+      run: |
+        mkdir -p data
+        touch data/database.sqlite
+    - name: Execute tests (Unit and Feature tests) via PHPUnit
+      env:
+        DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
+      run: vendor/bin/phpunit
+    - name: Execute code checking via PHPStan
+      run: vendor/bin/phpstan
 
 
-      # - name: Run Doctrine Migrations
-      #   env:
-      #     DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
-      #   run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
-
-      - name: Load Fixtures
-        env:
-          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db_test
-        run: php bin/console doctrine:fixtures:load --no-interaction
-
-      - name: Run PHPUnit Tests
-        env:
-          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
-        run: php bin/phpunit
-
-      - name: Execute code checking via PHPStan
-        run: vendor/bin/phpstan
-
-
-
-
-
-# # This workflow uses actions that are not certified by GitHub.
-# # They are provided by a third-party and are governed by separate terms of service, privacy policy, and support
-# # documentation.
-
-# name: ci-critipixel
-
-# on:
-#   push:
-#     branches: [ "main" ]
-
-# permissions:
-#   contents: read
-
-# jobs:
-#   critipixel-tests:
-#     runs-on: ubuntu-latest
-#     steps:
-#     #  To automatically get bug fixes and new Php versions for shivammathur/setup-php,
-#     # change this to (see https://github.com/shivammathur/setup-php#bookmark-versioning):
-#     # uses: shivammathur/setup-php@v2
-#     - uses: shivammathur/setup-php@2cb9b829437ee246e9b3cac53555a39208ca6d28
-#       with:
-#         php-version: '8.2'
-#     - uses: actions/checkout@v4
-#     - name: Copy .env.test.local
-#       run: php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
-#     - name: Cache Composer packages
-#       id: composer-cache
-#       uses: actions/cache@v3
-#       with:
-#         path: vendor
-#         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-#         restore-keys: |
-#           ${{ runner.os }}-php-
-#     - name: Install Dependencies
-#       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-#     - name: Create Database
-#       run: |
-#         mkdir -p data
-#         touch data/database.sqlite
-#       env:
-#         DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
-#     - name: Run Doctrine Migrations
-#       env:
-#         DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
-#       #run: php bin/console doctrine:migrations:migrate --no-interaction
-#       run: php bin/console doctrine:schema:create --no-interaction
-#     - name: Load Fixtures
-#       env:
-#         DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
-#       run: php bin/console doctrine:fixtures:load --no-interaction
-#     - name: Execute tests (Unit and Feature tests) via PHPUnit
-#       run: vendor/bin/phpunit
-#     - name: Execute code checking via PHPStan
-#       run: vendor/bin/phpstan
