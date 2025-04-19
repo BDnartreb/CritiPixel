@@ -55,19 +55,25 @@ jobs:
             sleep 2
           done
 
+      - name: Manually create test_db_test database
+        env:
+          PGPASSWORD: symfony
+        run: |
+          psql -h localhost -U symfony -d postgres -c "CREATE DATABASE test_db_test;"
+
       - name: Create Database Schema
         env:
-          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
+          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db_test
         run: php bin/console doctrine:schema:create --no-interaction
 
       - name: Load Fixtures
         env:
-          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
+          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db_test
         run: php bin/console doctrine:fixtures:load --no-interaction
 
       - name: Run Tests
         env:
-          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
+          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db_test
         run: vendor/bin/phpunit
 
       - name: Execute code checking via PHPStan
