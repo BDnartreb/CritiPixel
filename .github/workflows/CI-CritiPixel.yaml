@@ -56,6 +56,30 @@ jobs:
           done
 
       - name: Drop & Recreate test database via Doctrine
+        env:
+          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
+        run: |
+          php bin/console doctrine:database:drop --force --if-exists --no-interaction --env=test
+          php bin/console doctrine:database:create --no-interaction --env=test
+
+      - name: Run Doctrine Migrations
+        env:
+          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
+        run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
+
+      - name: Load Fixtures
+        env:
+          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
+        run: php bin/console doctrine:fixtures:load --no-interaction --env=test
+
+      - name: Run PHPUnit Tests
+        env:
+          DATABASE_URL: pgsql://symfony:symfony@localhost:5432/test_db
+        run: php bin/phpunit
+
+      - name: Execute code checking via PHPStan
+        run: vendor/bin/phpstan
+
 
 
 
