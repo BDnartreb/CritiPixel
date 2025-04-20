@@ -68,13 +68,6 @@ jobs:
     #  env:
     #    DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
     
-    - name: Upload login HTML debug
-      uses: actions/upload-artifact@v3
-      with:
-        name: login-page
-        path: /tmp/login-page.html
-
-
     - name: Display login.html.twig
       run: cat templates/views/auth/login.html.twig
 
