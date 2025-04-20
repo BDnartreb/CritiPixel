@@ -53,16 +53,6 @@ jobs:
       run: php bin/console doctrine:query:sql "SELECT * FROM user"
       env:
         DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
-    
-    
-    - name: Install Symfony assets
-      run: php bin/console assets:install public
-
-    - name: Warm up Symfony cache
-      run: php bin/console cache:warmup --env=test
-
-
-
     - name: Execute tests (Unit and Feature tests) via PHPUnit
       env:
         DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
