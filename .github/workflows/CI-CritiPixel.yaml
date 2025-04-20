@@ -66,7 +66,12 @@ jobs:
     #  run: vendor/bin/phpunit
       run: vendor/bin/phpunit --log-junit report.xml || cat var/log/test.log
     
-    
+    - name: Show login page HTML
+      if: always()  # même si les tests échouent
+      run: |
+        echo "=== Content of login page ==="
+        cat var/test-login-page.html || echo "File not found"
+
     
     - name: Execute code checking via PHPStan
       run: vendor/bin/phpstan
