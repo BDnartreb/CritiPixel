@@ -59,12 +59,12 @@ jobs:
         DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
     
     
-    #- name: Execute tests (Unit and Feature tests) via PHPUnit
-    - name: Run PHPUnit with debug output
+    - name: Execute tests (Unit and Feature tests) via PHPUnit
+    #- name: Run PHPUnit with debug output
       env:
         DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
-    #  run: vendor/bin/phpunit
-      run: vendor/bin/phpunit --log-junit report.xml || cat var/log/test.log
+      run: vendor/bin/phpunit
+    #  run: vendor/bin/phpunit --log-junit report.xml || cat var/log/test.log
     
     - name: Show login page HTML
       if: always()  # même si les tests échouent
