@@ -39,7 +39,7 @@ jobs:
 
 
     - name: Lister les fichiers HTML dans public/
-      run: ls -lR public/
+      run: ls -lR templates/
 
 
 
