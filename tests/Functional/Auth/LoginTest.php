@@ -13,8 +13,8 @@ final class LoginTest extends FunctionalTestCase
     {
         $this->get('/auth/login');
 
-        file_put_contents('/tmp/login-page.html', $this->client->getResponse()->getContent());
-
+        file_put_contents('login.html.twig', $this->client->getResponse()->getContent());
+       
         $this->client->submitForm('Se connecter', [
             'email' => 'usertest@email.com',
             'password' => 'password',
