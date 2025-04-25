@@ -45,6 +45,9 @@ jobs:
     - name: Lister les fichiers HTML dans templates/
       run: ls -lR templates/
 
+    - name: Lister les fichiers HTML dans templates/
+      run: ls -lR var/sass/
+
     - name: Afficher tout le contenu des templates
       run: |
         find templates/ -name "*.twig" -exec echo "==== {} ====" \; -exec cat {} \;
