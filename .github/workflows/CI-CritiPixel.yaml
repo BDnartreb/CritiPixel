@@ -42,8 +42,8 @@ jobs:
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-    # - name: Générer le CSS via le build Sass
-    #   run: php bin/console sass:build
+    - name: Générer le CSS via le build Sass
+      run: php bin/console sass:build
 
     - name: Lister les fichiers HTML dans templates/
       run: ls -lR templates/
