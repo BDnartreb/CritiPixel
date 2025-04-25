@@ -45,6 +45,10 @@ jobs:
     - name: Lister les fichiers HTML dans templates/
       run: ls -lR templates/
 
+    - name: Afficher tout le contenu des templates
+      run: |
+        find templates/ -name "*.twig" -exec echo "==== {} ====" \; -exec cat {} \;
+
     - name: Create Database
       run: |
         mkdir -p data
