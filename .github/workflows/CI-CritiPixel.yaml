@@ -64,7 +64,13 @@ jobs:
       run: php bin/console doctrine:query:sql "SELECT * FROM user"
       env:
         DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
-    
+
+    - name: Sauvegarder les templates comme artefact
+      uses: actions/upload-artifact@v3
+      with:
+        name: rendered-templates
+        path: templates/
+      
     - name: Display login.html.twig
       run: cat templates/views/auth/login.html.twig
 
