@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class CreateReviewTest extends WebTestCase
+class ReviewForConnectedUserTest extends WebTestCase
 //class CreateReviewTest extends FunctionalTestCase
 {
     private EntityManagerInterface $em;
@@ -94,7 +94,7 @@ class CreateReviewTest extends WebTestCase
     {
         return [
             ['3', 'Blabla'],
-            ['5', ''],
+            ['4', ''],
         ];
     }
 
