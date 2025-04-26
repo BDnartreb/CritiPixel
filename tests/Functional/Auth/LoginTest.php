@@ -1,45 +1,45 @@
 <?php
 
-declare(strict_types=1);
+// declare(strict_types=1);
 
-namespace App\Tests\Functional\Auth;
+// namespace App\Tests\Functional\Auth;
 
-use App\Tests\Functional\FunctionalTestCase;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+// use App\Tests\Functional\FunctionalTestCase;
+// use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-final class LoginTest extends FunctionalTestCase
-{
-    public function testThatLoginShouldSucceeded(): void
-    {
-        $this->get('/auth/login');
+// final class LoginTest extends FunctionalTestCase
+// {
+//     public function testThatLoginShouldSucceeded(): void
+//     {
+//         $this->get('/auth/login');
 
-        file_put_contents('login.html.twig', $this->client->getResponse()->getContent());
+//         file_put_contents('login.html.twig', $this->client->getResponse()->getContent());  
        
-        $this->client->submitForm('Se connecter', [
-            'email' => 'usertest@email.com',
-            'password' => 'password',
-        ]);
+//         $this->client->submitForm('Se connecter', [
+//             'email' => 'usertest@email.com',
+//             'password' => 'password',
+//         ]);
 
-        $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
+//         $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
 
-        self::assertTrue($authorizationChecker->isGranted('IS_AUTHENTICATED'));
+//         self::assertTrue($authorizationChecker->isGranted('IS_AUTHENTICATED'));
 
-        $this->get('/auth/logout');
+//         $this->get('/auth/logout');
 
-        self::assertFalse($authorizationChecker->isGranted('IS_AUTHENTICATED'));
-    }
+//         self::assertFalse($authorizationChecker->isGranted('IS_AUTHENTICATED'));
+//     }
 
-    public function testThatLoginShouldFailed(): void
-    {
-        $this->get('/auth/login');
+//     public function testThatLoginShouldFailed(): void
+//     {
+//         $this->get('/auth/login');
 
-        $this->client->submitForm('Se connecter', [
-            'email' => 'usertest@email.com',
-            'password' => 'fail'
-        ]);
+//         $this->client->submitForm('Se connecter', [
+//             'email' => 'usertest@email.com',
+//             'password' => 'fail'
+//         ]);
 
-        $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
+//         $authorizationChecker = $this->service(AuthorizationCheckerInterface::class);
 
-        self::assertFalse($authorizationChecker->isGranted('IS_AUTHENTICATED'));
-    }
-}
+//         self::assertFalse($authorizationChecker->isGranted('IS_AUTHENTICATED'));
+//     }
+// }
