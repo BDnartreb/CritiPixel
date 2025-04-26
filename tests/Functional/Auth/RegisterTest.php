@@ -47,7 +47,7 @@ final class RegisterTest extends FunctionalTestCase
     */
     public static function provideInvalidFormData(): iterable
     {
-        //yield 'empty username' => [self::getFormData(['register[username]' => ''])];
+        yield 'empty username' => [self::getFormData(['register[username]' => ''])];
         yield 'non unique username' => [self::getFormData(['register[username]' => 'user+1'])];
         yield 'too long username' => [self::getFormData(['register[username]' => 'Lorem ipsum dolor sit amet orci aliquam'])];
         yield 'empty email' => [self::getFormData(['register[email]' => ''])];
@@ -62,9 +62,9 @@ final class RegisterTest extends FunctionalTestCase
     public static function getFormData(array $overrideData = []): array
     {
         return [
-            'register[username]' => 'username',
-            'register[email]' => 'user@email.com',
-            'register[plainPassword]' => 'SuperPassword123!'
+            'register[username]' => 'usertest',
+            'register[email]' => 'usertest@email.com',
+            'register[plainPassword]' => 'password'
         ] + $overrideData;
     }
 }
