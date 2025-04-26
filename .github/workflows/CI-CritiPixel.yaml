@@ -45,13 +45,22 @@ jobs:
     - name: Générer le CSS via le build Sass
       run: php bin/console sass:build
 
+    - name: InGénérer le CSS via le build Sass
+      run: php bin/console importmap:install
+
     - name: Lister les fichiers HTML dans templates/
       run: ls -lR templates/
 
     - name: Lister les fichiers dans var/sass
       run: ls -lR var/sass/
 
+
+
     - name: Afficher tout le contenu des templates
+      run: |
+        find templates/ -name "*.twig" -exec echo "==== {} ====" \; -exec cat {} \;
+
+    - name: Afficher le contenu html login
       run: |
         find templates/ -name "*.twig" -exec echo "==== {} ====" \; -exec cat {} \;
 
